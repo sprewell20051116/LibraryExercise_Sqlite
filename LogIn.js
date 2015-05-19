@@ -1,18 +1,18 @@
 //  Declare SQL Query for SQLite
  
-var createStatement = "CREATE TABLE IF NOT EXISTS Contacts (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, useremail TEXT)";
+var createStatement = "CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, cardid TEXT)";
  
-var selectAllStatement = "SELECT * FROM Contacts";
+var selectAllStatement = "SELECT * FROM Users";
  
-var insertStatement = "INSERT INTO Contacts (username, useremail) VALUES (?, ?)";
+var insertStatement = "INSERT INTO Users (user, cardid) VALUES (?, ?)";
  
-var updateStatement = "UPDATE Contacts SET username = ?, useremail = ? WHERE id=?";
+var updateStatement = "UPDATE Users SET user = ?, cardid = ? WHERE id=?";
  
-var deleteStatement = "DELETE FROM Contacts WHERE id=?";
+var deleteStatement = "DELETE FROM Users WHERE id=?";
  
-var dropStatement = "DROP TABLE Contacts";
+var dropStatement = "DROP TABLE Users";
  
- var db = openDatabase("AddressBook", "1.0", "Address Book", 200000);  // Open SQLite Database
+ var db = openDatabase("UserList", "1.0", "User List", 200000);  // Open SQLite Database
  
 var dataset;
  
@@ -63,7 +63,7 @@ var DataType;
 function createTable()  // Function for Create Table in SQLite.
  
 {
- 
+	console.log("createTable");
     db.transaction(function (tx) { tx.executeSql(createStatement, [], showRecords, onError); });
  
 }
@@ -71,14 +71,13 @@ function createTable()  // Function for Create Table in SQLite.
 function insertRecord() // Get value from Input and insert record . Function Call when Save/Submit Button Click..
  
 {
- 
-        var usernametemp = $('input:text[id=username]').val();
- 
-        var useremailtemp = $('input:text[id=useremail]').val();
+ 		console.log("insertRecord");
+        var usernametemp = $('input:text[id=user]').val();
+        var useremailtemp = $('input:text[id=cardid]').val();
         db.transaction(function (tx) { tx.executeSql(insertStatement, [usernametemp, useremailtemp], loadAndReset, onError); });
  
         //tx.executeSql(SQL Query Statement,[ Parameters ] , Sucess Result Handler Function, Error Result Handler Function );
- 
+
 }
  
 function deleteRecord(id) // Get id of record . Function Call when Delete Button Click..
