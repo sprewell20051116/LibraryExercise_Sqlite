@@ -1,10 +1,10 @@
 //  Declare SQL Query for SQLite
  
-var createStatement = "CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, cardid TEXT)";
+var createStatement = "CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, cardid TEXT, mobile TEXT, addr TEXT, password TEXT)";
  
 var selectAllStatement = "SELECT * FROM Users";
  
-var insertStatement = "INSERT INTO Users (user, cardid) VALUES (?, ?)";
+var insertStatement = "INSERT INTO Users (user, cardid, mobile, addr, password) VALUES (?, ?)";
  
 var updateStatement = "UPDATE Users SET user = ?, cardid = ? WHERE id=?";
  
@@ -12,7 +12,7 @@ var deleteStatement = "DELETE FROM Users WHERE id=?";
  
 var dropStatement = "DROP TABLE Users";
  
- var db = openDatabase("UserList", "1.0", "User List", 200000);  // Open SQLite Database
+ var db = openDatabase("UserList", "2.0", "User List", 200000);  // Open SQLite Database
  
 var dataset;
  
@@ -74,6 +74,7 @@ function insertRecord() // Get value from Input and insert record . Function Cal
  		console.log("insertRecord");
         var usernametemp = $('input:text[id=user]').val();
         var useremailtemp = $('input:text[id=cardid]').val();
+ 		console.log("usernametemp %s", usernametemp);
         db.transaction(function (tx) { tx.executeSql(insertStatement, [usernametemp, useremailtemp], loadAndReset, onError); });
  
         //tx.executeSql(SQL Query Statement,[ Parameters ] , Sucess Result Handler Function, Error Result Handler Function );
