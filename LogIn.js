@@ -24,15 +24,22 @@ var DataType;
  
     try {
  
+ 		// Check for the various File API support.
+		if (window.File && window.FileReader && window.FileList && window.Blob) {
+	  //do your stuff!
+	  		  //alert('OK!!!!!');
+
+		} else {
+		  alert('The File APIs are not fully supported by your browser.');
+		}
+ 
         if (!window.openDatabase)  // Check browser is supported SQLite or not.
  
         {
  
             alert('Databases are not supported in this browser.');
  
-        }
- 
-        else {
+        } else {
  
             createTable();  // If supported then call Function for create table in SQLite
  
@@ -65,8 +72,17 @@ function createTable()  // Function for Create Table in SQLite.
 {
 	console.log("createTable");
     db.transaction(function (tx) { tx.executeSql(createStatement, [], showRecords, onError); });
- 
 }
+
+
+
+function checkUserInDatabase() // Get value from Input and insert record . Function Call when Save/Submit Button Click..
+{
+ 		console.log("checkUserInDatabase");
+
+}
+ 
+
  
 function insertRecord() // Get value from Input and insert record . Function Call when Save/Submit Button Click..
  
@@ -202,6 +218,8 @@ $(document).ready(function () // Call function when page is ready for load..
  
     initDatabase();
  
+    $("#submit").click(checkUserInDatabase);  
+
     $("#submitButton").click(insertRecord);  // Register Event Listener when button click.
  
     $("#btnUpdate").click(updateRecord);
