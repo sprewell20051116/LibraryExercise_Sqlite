@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+
+
+    <title>Log-in</title>
+        
+    <link rel='stylesheet prefetch' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css'>
+
+        <link rel="stylesheet" href="css/style.css">
+
+    
+  </head>
+
+  <body>
+
+    <div class="login-card">
+    <h1>Log-in</h1><br>
+  <form>
+    <input type="text" name="user" placeholder="Username">
+    <input type="password" name="pass" placeholder="Password">
+    <input type="submit" name="login" class="login login-submit" value="login" onclick="LoginBtnClicked();">
+    
+    <input type="file" id="files" name="files[]" multiple />
+<output id="list"></output>
+
+<script>
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                  '</li>');
+    }
+    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+</script>
+
+
+  </form>
+    
+  <div class="login-help">
+    <a href="Register_index.html">Register</a> • <a href="#">Forgot Password</a>
+  </div>
+</div>
+
+<!-- <div id="error"><img src="https://dl.dropboxusercontent.com/u/23299152/Delete-icon.png" /> Your caps-lock is on.</div> -->
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+<!--  <script type="text/javascript" src="LogIn.js"> </script> -->
+
+
+
+
+<script>
+
+var createStatement = "CREATE TABLE IF NOT EXISTS userList (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, cardid TEXT, mobile TEXT, addr TEXT, password TEXT)";
+var selectAllStatement = "SELECT * FROM userList";
+var insertStatement = "INSERT INTO userList (user, cardid, mobile, addr, password) VALUES (?, ?)";
+var updateStatement = "UPDATE userList SET user = ?, cardid = ? WHERE id=?";
+var deleteStatement = "DELETE FROM userList WHERE id=?";
+var dropStatement = "DROP TABLE userList";
+var db = openDatabase("userList", "2.0", "User List", 200000);  // Open SQLite Database
+var dataset;
+var DataType;
+
+function LoginBtnClicked() 
+{
+	var userName = $('input:text[name=user]').val();
+	var password = $('input:password[name=pass]').val();	
+	console.log("LoginBtnClicked");
+	console.log("user text = %s",userName);
+	console.log("pass text = %s",password);
+	initDatabase();
+	//insertRecord();
+	//showRecords();
+}
+
+ 
+ function initDatabase()  // Function Call When Page is ready.
+{
+    try {
+ 		// Check for the various File API support.
+		if (window.File && window.FileReader && window.FileList && window.Blob) {
+		} else {
+		  alert('The File APIs are not fully supported by your browser.');
+		}
+ 
+        if (!window.openDatabase)  // Check browser is supported SQLite or not.
+        {
+            alert('Databases are not supported in this browser.');
+ 
+        } else {
+            createTable();  // If supported then call Function for create table in SQLite
+        }
+    }
+ 
+    catch (e) {
+        if (e == 2) {
+            // Version number mismatch. 
+            console.log("Invalid database version.");
+        } else {
+            console.log("Unknown error " + e + ".");
+        }
+        return;
+    }
+}
+ 
+ 
+ 
+function createTable()  // Function for Create Table in SQLite.
+ 
+{
+	console.log("createTable");
+    db.transaction(function (tx) { 
+    	tx.executeSql(createStatement, 
+    					[], 
+    					showRecords, 
+    					onError); 
+    	});
+}
+
+function insertRecord() // Get value from Input and insert record . Function Call when Save/Submit Button Click..
+{
+	console.log("insertRecord");
+
+	var userName = $('input:text[name=user]').val();
+	var password = $('input:password[name=pass]').val();
+    db.transaction(function (tx) { tx.executeSql(insertStatement, [userName, password], loadAndReset, onError); });
+ 
+        //tx.executeSql(SQL Query Statement,[ Parameters ] , Sucess Result Handler Function, Error Result Handler Function );
+ 
+}
+ 
+
+function showRecords() // Function For Retrive data from Database Display records as list
+ 
+{
+ 	console.log("showRecords");
+    $("#results").html('')			
+	
+    db.transaction(function (tx) {
+          tx.executeSql(selectAllStatement, [], function (tx, result) {
+            console.log("transaction2");
+            dataset = result.rows;
+            console.log("dataset = %d",dataset);
+            for (var i = 0, item = null; i < dataset.length; i++) {
+                item = dataset.item(i);
+                
+                var linkeditdelete = '<li>' + item['name'] + ' , ' + item['phone'] + '    ' + '<a href="#" onclick="loadRecord(' + i + ');">edit</a>' + '    ' +
+                                            '<a href="#" onclick="deleteRecord(' + item['cardNo'] + ');">delete</a></li>';
+                $("#results").append(linkeditdelete);
+            }
+        });
+    });
+     	console.log("222"); 
+}
+
+function loadRecord(i) // Function for display records which are retrived from database.
+{
+    var item = dataset.item(i);
+    $("#name").val((item['name']).toString());
+    $("#phone").val((item['phone']).toString());
+    $("#cardNo").val((item['cardNo']).toString());
+}
+
+ 
+function loadAndReset() //Function for Load and Reset...
+{
+    resetForm();
+    showRecords()
+}
+
+
+function resetForm() // Function for reset form input values.
+ 
+{
+ 
+    $("#name").val("");
+    $("#phone").val("");
+  
+}
+
+
+function onError(tx, error) // Function for Hendeling Error...
+{
+    alert(error.message);
+}
+ 
+
+</script>
+    
+    
+    
+  </body>
+</html>
